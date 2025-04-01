@@ -6,7 +6,7 @@ public class RentalRecord {
     private Customer customer;
     private LocalDate recordDate;
     private double totalAmount;
-    private String recordType; // "RENT" or "RETURN"
+    private String recordType; 
 
     public RentalRecord(Vehicle vehicle, Customer customer, LocalDate recordDate, double totalAmount, String recordType) {
         this.vehicle = vehicle;
@@ -24,7 +24,6 @@ public class RentalRecord {
         return vehicle;
     }
 
-    // ✅ Add missing getter methods
     public LocalDate getRecordDate() {
         return recordDate;
     }
