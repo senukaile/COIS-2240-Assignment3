@@ -1,8 +1,10 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ArrayList;
 
 public class RentalSystem {
@@ -11,10 +13,11 @@ public class RentalSystem {
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
 
-    // Private constructor to prevent direct instantiation
-    private RentalSystem() {}
+    private RentalSystem() {
+        loadData(); 
+    }
 
-    // Singleton instance getter
+
     public static RentalSystem getInstance() {
         if (instance == null) {
             instance = new RentalSystem();
@@ -109,7 +112,66 @@ public class RentalSystem {
         return null;
     }
 
-    // Save vehicle to file
+    private void loadData() {
+        loadVehicles();
+        loadCustomers();
+        loadRentalRecords();
+    }
+
+    private void loadVehicles() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("vehicles.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                String licensePlate = parts[0];
+                String make = parts[1];
+                String model = parts[2];
+                int year = Integer.parseInt(parts[3]);
+                Vehicle vehicle = new Vehicle(licensePlate, make, model, year);
+                vehicles.add(vehicle);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading vehicles: " + e.getMessage());
+        }
+    }
+
+    private void loadCustomers() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("customers.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                int customerId = Integer.parseInt(parts[0]);
+                String customerName = parts[1];
+                Customer customer = new Customer(customerId, customerName);
+                customers.add(customer);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading customers: " + e.getMessage());
+        }
+    }
+
+    private void loadRentalRecords() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("rental_records.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                String licensePlate = parts[0];
+                int customerId = Integer.parseInt(parts[1]);
+                LocalDate date = LocalDate.parse(parts[2]);
+                double amount = Double.parseDouble(parts[3]);
+                String action = parts[4];
+
+                Vehicle vehicle = findVehicleByPlate(licensePlate);
+                Customer customer = findCustomerById(customerId);
+                
+                RentalRecord record = new RentalRecord(vehicle, customer, date, amount, action);
+                rentalHistory.addRecord(record);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading rental records: " + e.getMessage());
+        }
+    }
+
     private void saveVehicle(Vehicle vehicle) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true))) {
             writer.write(vehicle.getLicensePlate() + "," + vehicle.getMake() + "," + vehicle.getModel() + "," + vehicle.getYear());
@@ -119,7 +181,7 @@ public class RentalSystem {
         }
     }
 
-    // Save customer to file
+
     private void saveCustomer(Customer customer) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true))) {
             writer.write(customer.getCustomerId() + "," + customer.getCustomerName());
@@ -129,7 +191,7 @@ public class RentalSystem {
         }
     }
 
-    // Save rental record to file
+
     private void saveRecord(RentalRecord record) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("rental_records.txt", true))) {
             writer.write(record.getVehicle().getLicensePlate() + "," + record.getCustomer().getCustomerId() + "," + record.getDate() + "," + record.getAmount() + "," + record.getAction());
