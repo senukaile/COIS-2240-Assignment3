@@ -1,52 +1,55 @@
+package assingment3;
+
 public abstract class Vehicle {
-    private String licensePlate;
-    private String make;
-    private String model;
-    private int year;
-    private VehicleStatus status;
+	 private String licensePlate;
+	 private String make;
+	 private String model;
+	 private int year;
+	 private Vehicle.VehicleStatus status; 
 
-    public enum VehicleStatus { AVAILABLE, RESERVED, RENTED, MAINTENANCE, OUTOFSERVICE }
+	 public enum VehicleStatus { AVAILABLE, RESERVED, RENTED, MAINTENANCE, OUTOFSERVICE }
 
-    public Vehicle(String make, String model, int year) {
-    	if (make == null || make.isEmpty())
-    		this.make = null;
-    	else
-    		this.make = make.substring(0, 1).toUpperCase() + make.substring(1).toLowerCase();
-    	
-    	if (model == null || model.isEmpty())
-    		this.model = null;
-    	else
-    		this.model = model.substring(0, 1).toUpperCase() + model.substring(1).toLowerCase();
-    	
-        this.year = year;
-        this.status = VehicleStatus.AVAILABLE;
-        this.licensePlate = null;
-    }
+	 public Vehicle(String make, String model, int year) {
+	     if (make == null || make.isEmpty())
+	         this.make = null;
+	     else
+	         this.make = make.substring(0, 1).toUpperCase() + make.substring(1).toLowerCase();
 
-    public Vehicle() {
-        this(null, null, 0);
-    }
+	     if (model == null || model.isEmpty())
+	         this.model = null;
+	     else
+	         this.model = model.substring(0, 1).toUpperCase() + model.substring(1).toLowerCase();
 
-    public void setLicensePlate(String plate) {
-        this.licensePlate = plate == null ? null : plate.toUpperCase();
-    }
+	     this.year = year;
+	     this.status = Vehicle.VehicleStatus.AVAILABLE; 
+	     this.licensePlate = null;
+	 }
 
-    public void setStatus(VehicleStatus status) {
-    	this.status = status;
-    }
+	 public Vehicle() {
+	     this(null, null, 0);
+	 }
 
-    public String getLicensePlate() { return licensePlate; }
+	 public void setLicensePlate(String plate) {
+	     this.licensePlate = plate == null ? null : plate.toUpperCase();
+	 }
 
-    public String getMake() { return make; }
+	 public void setStatus(Vehicle.VehicleStatus status) { 
+	     this.status = status;
+	 }
 
-    public String getModel() { return model;}
+	 public String getLicensePlate() { return licensePlate; }
 
-    public int getYear() { return year; }
+	 public String getMake() { return make; }
 
-    public VehicleStatus getStatus() { return status; }
+	 public String getModel() { return model; }
 
-    public String getInfo() {
-        return "| " + licensePlate + " | " + make + " | " + model + " | " + year + " | " + status + " |";
-    }
+	 public int getYear() { return year; }
 
-}
+	 public Vehicle.VehicleStatus getStatus() { 
+	     return status;
+	 }
+
+	 public String getInfo() {
+	     return "| " + licensePlate + " | " + make + " | " + model + " | " + year + " | " + status + " |";
+	 }
+	}
