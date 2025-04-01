@@ -16,12 +16,11 @@ public class RentalSystem {
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
 
-    // Private constructor to prevent external instantiation
     RentalSystem() {
         loadData(); 
     }
 
-    // Singleton instance
+    
     public static RentalSystem getInstance() {
         if (instance == null) {
             instance = new RentalSystem();
@@ -140,7 +139,6 @@ public class RentalSystem {
             while ((line = reader.readLine()) != null) { 
                 String[] parts = line.split(",");
                 
-                // Ensure the line contains at least 5 parts
                 if (parts.length < 5) {
                     System.out.println("Skipping invalid line: " + line);
                     continue;
@@ -224,20 +222,20 @@ public class RentalSystem {
 
     private void saveRecord(RentalRecord record) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("rental_records.txt", true))) {
-            Vehicle vehicle = record.getVehicle(); // Get vehicle from record
-            Customer customer = record.getCustomer(); // Get customer from record
+            Vehicle vehicle = record.getVehicle(); 
+            Customer customer = record.getCustomer(); 
             
             String type = (vehicle instanceof Car) ? "Car" : "Motorcycle";
             
-            // Write data in CSV format
+           
             writer.write(vehicle.getLicensePlate() + "," 
                          + customer.getCustomerId() + "," 
-                         + record.getRecordDate() + ","   // Correct getter for date
-                         + record.getTotalAmount() + "," // Correct getter for amount
-                         + record.getRecordType() + ","  // Correct getter for action type
+                         + record.getRecordDate() + ","   
+                         + record.getTotalAmount() + "," 
+                         + record.getRecordType() + ","  
                          + type);
 
-            writer.newLine(); // Move to the next line for the next record
+            writer.newLine(); 
         } catch (IOException e) {
             System.out.println("Error saving rental record: " + e.getMessage());
         }
