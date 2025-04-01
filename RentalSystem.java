@@ -26,14 +26,14 @@ public class RentalSystem {
     }
 
     public boolean addVehicle(Vehicle vehicle) {
-        if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
-            System.out.println("Error: A vehicle with this license plate already exists.");
-            return false;
-        }
-        vehicles.add(vehicle);
-        saveVehicle(vehicle);
-        System.out.println("Vehicle added successfully.");
-        return true;
+    if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
+        System.out.println("Error: A vehicle with this license plate already exists.");
+        return false;
+    }
+    vehicles.add(vehicle);
+    saveVehicle(vehicle);
+    System.out.println("Vehicle added successfully.");
+    return true;
     }
 
     public boolean addCustomer(Customer customer) {
@@ -46,6 +46,7 @@ public class RentalSystem {
         System.out.println("Customer added successfully.");
         return true;
     }
+
 
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
@@ -137,8 +138,8 @@ public class RentalSystem {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 String licensePlate = parts[0];
-                String make = parts[1];
-                String model = parts[2];
+                String make = capitalize(parts[1]);
+                String model = capitalize(parts[2]);
                 int year = Integer.parseInt(parts[3]);
                 Vehicle vehicle = new Vehicle(licensePlate, make, model, year);
                 vehicles.add(vehicle);
@@ -213,4 +214,12 @@ public class RentalSystem {
             System.out.println("Error saving rental record: " + e.getMessage());
         }
     }
+
+    private String capitalize(String input) {
+    if (input == null || input.isEmpty()) {
+        return input;
+    }
+    return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
+
 }
