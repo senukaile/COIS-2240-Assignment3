@@ -1,3 +1,4 @@
+
 import java.time.LocalDate;
 
 public class RentalRecord {
@@ -15,14 +16,28 @@ public class RentalRecord {
         this.recordType = recordType;
     }
 
-    public Customer getCustomer(){
-    	return customer;
+    public Customer getCustomer() {
+        return customer;
     }
     
-    public Vehicle getVehicle(){
-    	return vehicle;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
-    
+
+    // ✅ Add missing getter methods
+    public LocalDate getRecordDate() {
+        return recordDate;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public String getRecordType() {
+        return recordType;
+    }
+ 
+
     @Override
     public String toString() {
         return recordType + " | Plate: " + vehicle.getLicensePlate() + 
