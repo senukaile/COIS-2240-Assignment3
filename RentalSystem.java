@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
+import assingment3.RentalRecord;
+
+
 
 public class RentalSystem {
     private static RentalSystem instance;
@@ -13,11 +16,12 @@ public class RentalSystem {
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
 
-    private RentalSystem() {
+    // Private constructor to prevent external instantiation
+    RentalSystem() {
         loadData(); 
     }
 
-
+    // Singleton instance
     public static RentalSystem getInstance() {
         if (instance == null) {
             instance = new RentalSystem();
@@ -26,14 +30,14 @@ public class RentalSystem {
     }
 
     public boolean addVehicle(Vehicle vehicle) {
-    if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
-        System.out.println("Error: A vehicle with this license plate already exists.");
-        return false;
-    }
-    vehicles.add(vehicle);
-    saveVehicle(vehicle);
-    System.out.println("Vehicle added successfully.");
-    return true;
+        if (findVehicleByPlate(vehicle.getLicensePlate()) != null) {
+            System.out.println("Error: A vehicle with this license plate already exists.");
+            return false;
+        }
+        vehicles.add(vehicle);
+        saveVehicle(vehicle);
+        System.out.println("Vehicle added successfully.");
+        return true;
     }
 
     public boolean addCustomer(Customer customer) {
@@ -46,8 +50,6 @@ public class RentalSystem {
         System.out.println("Customer added successfully.");
         return true;
     }
-
-
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.AVAILABLE) {
@@ -135,19 +137,35 @@ public class RentalSystem {
     private void loadVehicles() {
         try (BufferedReader reader = new BufferedReader(new FileReader("vehicles.txt"))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) { 
                 String[] parts = line.split(",");
-                String licensePlate = parts[0];
-                String make = capitalize(parts[1]);
-                String model = capitalize(parts[2]);
-                int year = Integer.parseInt(parts[3]);
-                Vehicle vehicle = new Vehicle(licensePlate, make, model, year);
-                vehicles.add(vehicle);
-            }
+                
+                // Ensure the line contains at least 5 parts
+                if (parts.length < 5) {
+                    System.out.println("Skipping invalid line: " + line);
+                    continue;
+                }
+
+                String licensePlate = parts[0]; 
+                String make = capitalize(parts[1]); 
+                String model = capitalize(parts[2]); 
+                int year = Integer.parseInt(parts[3]); 
+                String type = parts[4]; 
+
+                Vehicle vehicle = type.equalsIgnoreCase("Car") ? 
+                    new Car(make, model, year, 5) : 
+                    new Motorcycle(make, model, year, false);
+
+                vehicle.setLicensePlate(licensePlate); 
+                vehicles.add(vehicle); 
+            } 
         } catch (IOException e) {
             System.out.println("Error loading vehicles: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing number in vehicles file: " + e.getMessage());
         }
     }
+
 
     private void loadCustomers() {
         try (BufferedReader reader = new BufferedReader(new FileReader("customers.txt"))) {
@@ -195,7 +213,6 @@ public class RentalSystem {
         }
     }
 
-
     private void saveCustomer(Customer customer) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true))) {
             writer.write(customer.getCustomerId() + "," + customer.getCustomerName());
@@ -205,21 +222,35 @@ public class RentalSystem {
         }
     }
 
-
     private void saveRecord(RentalRecord record) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("rental_records.txt", true))) {
-            writer.write(record.getVehicle().getLicensePlate() + "," + record.getCustomer().getCustomerId() + "," + record.getDate() + "," + record.getAmount() + "," + record.getAction());
-            writer.newLine();
+            Vehicle vehicle = record.getVehicle(); // Get vehicle from record
+            Customer customer = record.getCustomer(); // Get customer from record
+            
+            String type = (vehicle instanceof Car) ? "Car" : "Motorcycle";
+            
+            // Write data in CSV format
+            writer.write(vehicle.getLicensePlate() + "," 
+                         + customer.getCustomerId() + "," 
+                         + record.getRecordDate() + ","   // Correct getter for date
+                         + record.getTotalAmount() + "," // Correct getter for amount
+                         + record.getRecordType() + ","  // Correct getter for action type
+                         + type);
+
+            writer.newLine(); // Move to the next line for the next record
         } catch (IOException e) {
             System.out.println("Error saving rental record: " + e.getMessage());
         }
     }
 
-    private String capitalize(String input) {
-    if (input == null || input.isEmpty()) {
-        return input;
-    }
-    return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
-    }
 
+    private String capitalize(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
+    }
+    
+    
+    
 }
