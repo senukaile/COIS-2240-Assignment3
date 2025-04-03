@@ -1,9 +1,20 @@
 package assingment3;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
+
+
+
+
+import org.junit.jupiter.api.BeforeEach;
+
 import java.time.LocalDate;
+
+
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 class VehicleRentalTest {
     private RentalSystem rentalSystem;
@@ -57,5 +68,25 @@ class VehicleRentalTest {
 
         rentalSystem.returnVehicle(vehicle, customer, LocalDate.now(), 50.0);
         assertEquals(Vehicle.VehicleStatus.AVAILABLE, vehicle.getStatus(), "Vehicle status should still be AVAILABLE.");
+    }
+
+    @Test
+    void testSingletonRentalSystem() {
+        try {
+            Constructor<RentalSystem> constructor = RentalSystem.class.getDeclaredConstructor();
+            
+            int modifiers = constructor.getModifiers();
+            assertTrue(Modifier.isPrivate(modifiers), "Constructor should be private to prevent direct instantiation.");
+
+            constructor.setAccessible(true); 
+            RentalSystem instance1 = constructor.newInstance();
+            RentalSystem instance2 = RentalSystem.getInstance(); 
+
+            assertSame(instance2, RentalSystem.getInstance(), "There should only be one instance of RentalSystem.");
+            assertNotNull(instance2, "The instance should not be null.");
+
+        } catch (Exception e) {
+            fail("Exception occurred during Singleton validation test: " + e.getMessage());
+        }
     }
 }
